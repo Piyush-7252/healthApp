@@ -1,0 +1,101 @@
+export const BASE_URL =
+  ' https://wordpress-575854-4040987.cloudwaysapps.com/wp-json/' ||
+  process.env.REACT_APP_API_PATH;
+export const SOCKET_URL = process.env.REACT_APP_SOCKET_API_PATH;
+export const UPLOAD_URL = `${BASE_URL}upload`;
+export const DOWNLOAD_URL = `${BASE_URL}download`;
+export const REQUEST_METHOD = {
+  get: 'read',
+  post: 'create',
+  update: 'update',
+  delete: 'delete',
+};
+export const API_URL = {
+  login: 'api/v1/token',
+  logout: 'auth/logout',
+  users: 'users',
+  refreshToken: 'auth/refresh-tokens',
+  signup: 'auth/register',
+  forgotPassword: 'auth/forgot-password',
+  authenticate: 'auth/validate-token',
+  practices: 'practice',
+  resetPassword: 'auth/reset-password',
+  changePassword: 'auth/change-password',
+  getEnumMasterType: 'enumMasterType',
+  getMasters: 'masters',
+  saveMasters: 'masters',
+  emailTemplates: 'email-templates',
+  assistant: 'assistant',
+  appointment: 'appointment',
+  practitioner: 'practitioner',
+  patient: 'patient',
+  clinicAdmin: 'clinic-admin',
+  services: 'service',
+  practiceLocation: 'practice-location',
+  getPractice: 'practice-location',
+  getPatients: 'patient',
+  practiceLocationSchedule: 'practice-location-schedule',
+  educationContent: 'education-content',
+  getPatientNotes: 'patient-note',
+  updatePatientNote: 'patient-note',
+  faxContact: 'fax-contact',
+  bookingService: 'booking/service',
+  bookingPractice: 'booking/practice',
+  booking: 'booking',
+  getFormList: 'form',
+  saveForm: 'form',
+  product: 'product',
+  invoice: 'invoice',
+  invoiceAggregate: 'invoice/aggregate',
+  invoicePayment: 'invoice-payment',
+  medicine: 'medicine',
+  patientOrder: 'patient-order',
+  pharmacyOrder: 'pharmacy-order',
+  sharedFormList: 'patient-form',
+  getPatientFormById: 'patient-form',
+  savePatientForm: 'patient-form-submission',
+  saveOnlyPatientForm: 'patient-form-submission',
+  getPatientForm: 'patient-form-submission',
+  chatTemplate: 'chat-template',
+  downloadInvoicePDF: 'pdf/invoice',
+  downloadPatientFormPDF: 'pdf/patientForm',
+  patientPrescription: 'patient-prescription',
+  patientActivity: 'patient-activity',
+  patientActivityHistory: 'patient-activity/history',
+  sendUserInvite: 'appointment/sendUserInvite',
+  getEducationContent: 'education-content',
+  chatChannelHistory: 'chat-channel-history',
+  faxHistory: 'fax-history',
+  sendPharmacyFax: 'fax-history',
+  downloadPharmacyOrderPDF: 'pdf/pharmacy-order',
+  shareNoteTemplate: 'patient-form/share-note-template',
+  userDevice: 'user-device',
+  patientPrescriptionTemplate: 'patient-prescription-template',
+  initiatePayment: 'invoice-payment/initiate-payment',
+  markClose: 'chat-channel-history/mark-close',
+  thirdPartySetting: 'practice-setting',
+  patientFile: 'patient-file',
+  generateLabel: 'patient-order/generate-label',
+  practiceStats: 'practice/stats',
+  invoiceStats: 'invoice-stats',
+  invoiceStatsTotal: 'invoice-stats/total',
+  notification: 'notification',
+  generateUpsLabel: 'patient-order/generate-label-ups',
+  updatePatientOrder: 'patient-order',
+  appointmentStats: 'appointment-stats',
+  validateResetPWToken: 'auth/validate-reset-password-token',
+  //
+  userDetail: 'wp/v2/users/me',
+  coursesList: 'ldlms/v1/sfwd-courses',
+  categoiresList: 'wp/v2/ld_course_category',
+  coursesListCategoryWise: 'ldlms/v2/sfwd-courses',
+  groupsList: 'buddyboss/v1/groups',
+  courseWiseLesson:'ldlms/v2/sfwd-lessons'
+};
+export const OPENTOK_API_KEY = process.env.REACT_APP_OPENTOK_API_KEY;
+export const REACT_APP_COLLECTJS_API_KEY =
+  process.env.REACT_APP_COLLECTJS_PUBLIC_KEY;
+
+export const ENCRYPT_REQUEST_KEY = process.env.REACT_APP_P_11;
+export const DECRYPT_RESPONSE_KEY = process.env.REACT_APP_P_22;
+export const ENVIRONMENT = process.env.REACT_APP_ENVIRONMENT;

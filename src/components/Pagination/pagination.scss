@@ -1,0 +1,16 @@
+.pagination_container {
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
+
+  .pagination_button {
+    font-family: Poppins-Medium, sans-serif;
+    font-size: 14px;
+    line-height: 21px;
+
+  }
+
+  .Mui-disabled {
+    border: 2px solid rgba(0, 0, 0, 0.2) !important;
+  }
+}
