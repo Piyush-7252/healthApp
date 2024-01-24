@@ -1,51 +1,48 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import LoadingButton from '../CustomButton/loadingButton';
-import { View } from 'react-native';
+import {View} from 'react-native';
 
-const ModalFooter = (props) => {
-  const { footer } = props || {};
-  const { leftActions = [], rightActions = [] } = footer || {};
+const ModalFooter = props => {
+  const {footer} = props || {};
+  const {leftActions = [], rightActions = [],containerStyle={}} = footer || {};
 
   return (
     <View
       style={{
-        display: 'flex',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        flexDirection: 'row',
-      }}
-    >
-      <View style={{ display: 'flex', gap: 15 }}>
-        {leftActions.map((item) => (
+        flexDirection:'row',
+        ...containerStyle
+      }}>
+      <View style={{flexDirection:'row'}}>
+        {leftActions.map(item => (
           <LoadingButton
-            key={item.name}
+            key={item.label}
             loading={item.loading}
             loadingPosition="start"
-            variant={item.variant || 'contained'}
-            onClick={item.action}
+            onPress={item.action}
             disabled={item.disabled}
             style={item.style}
-          >
-            {item.name}
-          </LoadingButton>
+            label={item?.label}
+          />
         ))}
       </View>
-      <View>
-        {rightActions.map((item) => (
+      <View style={{flexDirection:'row'}}>
+        {rightActions.map(item => (
           <LoadingButton
-            key={item.name}
+            key={item.label}
             loading={item.loading}
-            variant={item.variant || 'contained'}
-            onClick={item.action}
+            loadingPosition="start"
+            onPress={item.action}
             disabled={item.disabled}
             style={item.style}
-          >
-            {item.name}
-          </LoadingButton>
+            label={item?.label}
+          />
         ))}
       </View>
     </View>
   );
 };
 
-export default React.memo(ModalFooter);
+export default ModalFooter;

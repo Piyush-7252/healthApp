@@ -1,9 +1,12 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {View} from 'react-native';
 import {IconButton} from '../icon';
 import {useNavigation} from '@react-navigation/native';
 import Typography from '../Typography';
-import { verticalScale } from '../../lib/utils';
+import {scale, verticalScale} from '../../lib/utils';
+import CustomButton from '../CustomButton';
+import {layoutPaddingRight} from './layoutStyle';
 
 function Header(props) {
   const naivation = useNavigation();
@@ -15,6 +18,7 @@ function Header(props) {
     titleStyle = {},
     backIconStyle = {},
     bigTitle,
+    rigthButtonProps = {},
   } = props || {};
   const handleBackPress = () => {
     if (naivation.canGoBack()) {
@@ -23,27 +27,51 @@ function Header(props) {
   };
   return (
     <>
-    <View
-      style={{
-        alignItems: 'flex-start',
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 10,
-        gap:20,
-        ...containerStyle,
-      }}>
-      {backIcon && (
-        <IconButton
-          style={{...backIconStyle}}
-          onPress={onBackPress || handleBackPress}
-        />
-      )}
-      {title && (
-        <Typography variant="headlineSmall" style={{...titleStyle}}>
-          {title}
-        </Typography>
-      )}
-    </View>
+      <View
+        style={{
+          marginTop: 10,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          paddingRight: layoutPaddingRight,
+          alignItem: 'center',
+          gap: 10,
+          ...containerStyle,
+        }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            flex: 1,
+          }}>
+          {backIcon && (
+            <IconButton
+              style={{...backIconStyle}}
+              onPress={onBackPress || handleBackPress}
+            />
+          )}
+          {title && (
+            <Typography
+              variant="titleMedium"
+              style={{flex: 1, flexWrap: 'wrap', ...titleStyle}}>
+              {title}
+            </Typography>
+          )}
+        </View>
+        {rigthButtonProps?.action && rigthButtonProps?.title && (
+          <View style={{...(rigthButtonProps?.style || {})}}>
+            <CustomButton
+              label={rigthButtonProps?.title}
+              onPress={rigthButtonProps?.action}
+              {...(rigthButtonProps?.buttonProps || {})}
+              contentStyle={{
+                flexDirection: undefined,
+                alignItems: undefined,
+                ...(rigthButtonProps?.buttonProps?.contentStyle || {}),
+              }}
+            />
+          </View>
+        )}
+      </View>
       {bigTitle && (
         <View
           style={{

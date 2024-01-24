@@ -1,30 +1,46 @@
 import React from 'react';
-import { TextInput as PaperTextInput, useTheme } from 'react-native-paper';
-import { Controller } from 'react-hook-form';
+import {TextInput as PaperTextInput, useTheme} from 'react-native-paper';
+import {Controller} from 'react-hook-form';
+import Typography from '../../Typography';
+import palette from '../../../theme/palette';
+import {View} from 'react-native';
 
-const TextAreaInput = ({ register, control, textLabel, placeholder, ...restProps }) => {
-  const theme = useTheme();
-
+const TextAreaInput = ({
+  register,
+  control,
+  textLabel,
+  placeholder,
+  containerStyle = {},
+  style = {},
+  disabled,
+  ...restProps
+}) => {
   return (
     <Controller
       control={control}
       {...register}
-      render={({ field, fieldState: { error } }) => (
-        <>
-          <PaperTextInput
-            mode="outlined"
-            multiline
-            numberOfLines={3}
-            label={textLabel}
-            placeholder={placeholder || 'Type your message here'}
-            error={!!error}
-            style={{ backgroundColor: 'transparent', marginVertical: 8 }}
-            {...restProps}
-            {...field}
-          />
-          {error && <Text style={{ color: theme.colors.error, fontSize: 12 }}>{error?.message}</Text>}
-        </>
-      )}
+      ref={null}
+      render={({field, fieldState: {error}}) => {
+        return (
+          <View style={{...containerStyle}}>
+            <PaperTextInput
+              multiline
+              label={textLabel}
+              disabled={disabled}
+              error={!!error}
+              {...restProps}
+              {...field}
+              onChangeText={field?.onChange}
+              style={{paddingHorizontal: 0, marginBottom: 8, ...style}}
+            />
+            {error && (
+              <Typography style={{color: palette.error.main}}>
+                {error.message}
+              </Typography>
+            )}
+          </View>
+        );
+      }}
     />
   );
 };

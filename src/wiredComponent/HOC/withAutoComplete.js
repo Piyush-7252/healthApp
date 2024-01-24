@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import debounce from 'lodash/debounce';
-import { REQUEST_METHOD } from 'src/api/constants';
+import {REQUEST_METHOD} from 'src/api/constants';
 import useCRUD from '../../hooks/useCRUD';
 
 const withAutoComplete =
-  (Component) =>
+  Component =>
   ({
     defaultValue,
     name,
@@ -32,30 +32,29 @@ const withAutoComplete =
 
     useEffect(() => {
       if (fetchInitial && !data) {
-        getData({ ...params, limit: 300 });
+        getData({...params, limit: 300});
       }
     }, [fetchInitial]);
 
     const debounceSearch = useMemo(
       () =>
-        debounce((searchText) => {
-          getData({ ...params, searchText });
+        debounce(searchText => {
+          getData({...params, searchText});
         }, 1000),
-      [getData, params]
+      [getData, params],
     );
 
     const handleOnSearch = useCallback(
-      (e) => {
-        const searchText = e.target.value;
+      searchText => {
         if (searchText.length > 2) {
           debounceSearch(searchText);
         }
       },
-      [debounceSearch]
+      [debounceSearch],
     );
 
     const handleOptionLabel = useCallback(
-      (option) => {
+      option => {
         if (Array.isArray(labelAccessor)) {
           return labelAccessor
             .reduce((acc, key) => `${acc} ${option[key] || ''} `, '')
@@ -63,18 +62,18 @@ const withAutoComplete =
         }
         return option[labelAccessor] || option;
       },
-      [labelAccessor]
+      [labelAccessor],
     );
 
     // When 'data' changes, append 'data.results' to 'allData' to persist across searches
     useEffect(() => {
-      if (data?.results) {
-        setAllData((prevData) => {
-          const newData = [...prevData, ...data.results];
+      if (data) {
+        setAllData(prevData => {
+          const newData = [...prevData, ...data];
           return newData.filter(
             (value, position, self) =>
               position ===
-              self.findIndex((t) => JSON.stringify(t) === JSON.stringify(value))
+              self.findIndex(t => JSON.stringify(t) === JSON.stringify(value)),
           );
         });
       }

@@ -1,10 +1,12 @@
-import useCRUD from './useCRUD';
+import {useDispatch} from 'react-redux';
+import {clearStoreData} from '../store/actions/crud';
 import {USER_DETAILS} from '../store/types';
-import {clearLocalStorage} from '../lib/asyncStorage';
+import useCRUD from './useCRUD';
 const {API_URL, REQUEST_METHOD} = require('src/api/constants');
-const {useCallback, useEffect} = require('react');
+const {useEffect} = require('react');
 
 const useAuthUser = () => {
+  const dispatch = useDispatch();
   const [
     userData,
     userDataError,
@@ -15,24 +17,24 @@ const useAuthUser = () => {
     id: USER_DETAILS,
     url: API_URL.userDetail,
     type: REQUEST_METHOD.get,
-    // shouldClearError:false,
   });
 
-  useEffect(() => {
-    callUserDataAPI();
-  }, []);
+  // useEffect(() => {
+  //   callUserDataAPI();
+  // }, []);
 
   useEffect(() => {
     if (userDataError) {
-      clearUserData(true);
-      clearLocalStorage();
+      dispatch(clearStoreData());
     }
   }, [userDataError]);
 
-  const refetchUser = useCallback((params = {}) => {
-    callUserDataAPI(params);
-  }, []);
-
-  return [userData, userDataError, userDataLoading, refetchUser, clearUserData];
+  return [
+    userData,
+    userDataError,
+    userDataLoading,
+    callUserDataAPI,
+    clearUserData,
+  ];
 };
 export default useAuthUser;

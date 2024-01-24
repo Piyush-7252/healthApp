@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
-import { REQUEST_METHOD } from 'src/api/constants';
-import FormSelect from 'src/components/form/Select';
-import { get, isArray, isEmpty, isObject } from 'lodash';
+import {REQUEST_METHOD} from 'src/api/constants';
+import FormSelect from '../../../components/form/Select';
+
+import {get, isArray, isEmpty, isObject} from 'lodash';
 import useAuthUser from 'src/hooks/useAuthUser';
 import useCRUD from '../../../hooks/useCRUD';
 
@@ -12,13 +13,13 @@ const WiredSelect = ({
   name,
   labelAccessor,
   url,
-  params,
+  params = {},
   onChange = () => {},
   cache = true,
   code,
   options,
   extraId,
-  extraAPIParams={},
+  extraAPIParams = {},
   accessor,
   fetchInitial = true,
   selectFirstValue,
@@ -26,19 +27,20 @@ const WiredSelect = ({
   crudId,
   responseKey = 'results',
   addOnFilterKey,
-  isNested= false,
+  isNested = false,
   identifier,
+  responseModifier,
   ...restProps
 }) => {
-
+  console.log("🚀 ~ file: index.js:35 ~ responseModifier:", extraAPIParams)
   const {form} = restProps || {};
-  const { watch } = form;
-  const {valueAccessor='value'}= restProps || {};
+  const {watch} = form;
+  const {valueAccessor = 'value'} = restProps || {};
 
   const [wiredSelectFilter, setWiredSelectFilter] = useState({});
   const addOnFilterCallChecked = useRef(false);
 
-  const [data, , loading, getData,clearData] = useCRUD({
+  const [data, , loading, getData, clearData] = useCRUD({
     id:
       crudId ||
       `wired-select-${restProps?.register?.name || name}${
@@ -46,47 +48,50 @@ const WiredSelect = ({
       }${extraId ? `-${extraId}` : ''}`,
     url,
     type: REQUEST_METHOD.get,
+    responseModifier
   });
   const [userData] = useAuthUser();
   if (applyPractice && userData?.practice?.id) {
-    Object.assign(params, { practice: userData.practice.id });
+    Object.assign(params, {practice: userData.practice.id});
   }
 
   useEffect(() => {
-    if(addOnFilterKey) {
-      const subscription = watch((value, {name:_name}) => {
-        let fieldData = get(value,_name) || []
-        if(_name===(identifier|| name)){
-          if(isNested){
-            if(!Array.isArray(fieldData)){
-              fieldData = [{[addOnFilterKey]:fieldData}]
+    if (addOnFilterKey) {
+      const subscription = watch((value, {name: _name}) => {
+        let fieldData = get(value, _name) || [];
+        if (_name === (identifier || name)) {
+          if (isNested) {
+            if (!Array.isArray(fieldData)) {
+              fieldData = [{[addOnFilterKey]: fieldData}];
             }
-            const nestedData = fieldData?.map(item=>item[name]);
-            setWiredSelectFilter({[addOnFilterKey]: nestedData})
-          }else{
-            if(!Array.isArray(fieldData)){
-              fieldData = [fieldData]
+            const nestedData = fieldData?.map(item => item[name]);
+            setWiredSelectFilter({[addOnFilterKey]: nestedData});
+          } else {
+            if (!Array.isArray(fieldData)) {
+              fieldData = [fieldData];
             }
-            if( fieldData.length ){
-              setWiredSelectFilter({[addOnFilterKey]: fieldData})
+            if (fieldData.length) {
+              setWiredSelectFilter({[addOnFilterKey]: fieldData});
             }
           }
-      }
-    });
-    return () => subscription.unsubscribe();
+        }
+      });
+      return () => subscription.unsubscribe();
     }
-    return ()=>{};
+    return () => {};
   }, []);
-  
+
   useEffect(() => {
-    const { reFetch, queryParams } = extraAPIParams || {};
+    const {reFetch, queryParams} = extraAPIParams || {};
     if (reFetch) {
       if (queryParams) {
-        getData({ ...params, ...queryParams,...wiredSelectFilter });
+        getData({...params, ...queryParams, ...wiredSelectFilter});
       } else {
         getData(
-          {...params,...wiredSelectFilter},
-          extraAPIParams?.reFetchData ? `/${extraAPIParams?.reFetchData}` : null
+          {...params, ...wiredSelectFilter},
+          extraAPIParams?.reFetchData
+            ? `/${extraAPIParams?.reFetchData}`
+            : null,
         );
       }
     }
@@ -94,18 +99,23 @@ const WiredSelect = ({
 
   useEffect(() => {
     if (options?.length || url === null) {
-      return 
+      return;
     }
-    if (!cache) {
-      getData({...params,...wiredSelectFilter});
+    if (!cache && fetchInitial) {
+      getData({...params, ...wiredSelectFilter});
     } else if (!data && fetchInitial) {
-      getData({...params,...wiredSelectFilter});
+      getData({...params, ...wiredSelectFilter});
     }
   }, [cache, url]);
 
-  useEffect(()=>()=>{
-      if(!cache) clearData(true);
-    },[])
+  useEffect(
+    () => () => {
+      if (!cache) {
+        clearData(true);
+      }
+    },
+    [],
+  );
 
   const parsedData = useMemo(() => {
     if (options?.length) {
@@ -122,21 +132,31 @@ const WiredSelect = ({
     }
     return [];
   }, [accessor, data, options]);
+  console.log("🚀 ~ file: index.js:135 ~ parsedData ~ parsedData:", parsedData)
 
-  useEffect(()=>{
-    if(parsedData && !isEmpty(wiredSelectFilter) && !addOnFilterCallChecked.current){
-      const addOnDataArray  = wiredSelectFilter[addOnFilterKey];
-      const dataResultObject = parsedData.reduce((acc,curr)=>{acc[curr[valueAccessor]]=1; return acc},{});
-      const nonExistingRecords = addOnDataArray.filter(item=>!dataResultObject[item]);
-      if(nonExistingRecords.length){
-        getData({...params,...wiredSelectFilter});
-        addOnFilterCallChecked.current=true
+  useEffect(() => {
+    if (
+      parsedData &&
+      !isEmpty(wiredSelectFilter) &&
+      !addOnFilterCallChecked.current
+    ) {
+      const addOnDataArray = wiredSelectFilter[addOnFilterKey];
+      const dataResultObject = parsedData.reduce((acc, curr) => {
+        acc[curr[valueAccessor]] = 1;
+        return acc;
+      }, {});
+      const nonExistingRecords = addOnDataArray.filter(
+        item => !dataResultObject[item],
+      );
+      if (nonExistingRecords.length) {
+        getData({...params, ...wiredSelectFilter});
+        addOnFilterCallChecked.current = true;
       }
     }
-  },[parsedData,wiredSelectFilter]);
+  }, [parsedData, wiredSelectFilter]);
 
   const getOptionLabel = useCallback(
-    (option) => {
+    option => {
       if (Array.isArray(labelAccessor)) {
         return labelAccessor
           .reduce((acc, key) => `${acc} ${option[key] || ''} `, '')
@@ -144,7 +164,7 @@ const WiredSelect = ({
       }
       return option[labelAccessor] || option;
     },
-    [labelAccessor]
+    [labelAccessor],
   );
 
   useEffect(() => {
@@ -164,6 +184,7 @@ const WiredSelect = ({
       loading={loading}
       onChange={onChange}
       labelAccessor={labelAccessor}
+      extraAPIParams={extraAPIParams}
       {...restProps}
     />
   );

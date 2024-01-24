@@ -1,8 +1,11 @@
 import {scale} from '../../lib/utils';
 import palette from '../../theme/palette';
 
+export const layoutPaddingLeft = scale(80);
+export const layoutPaddingRight = scale(80);
 export const layoutPadding = {
-  paddingHorizontal: scale(80),
+  paddingLeft: layoutPaddingLeft,
+  paddingRight: layoutPaddingRight,
 };
 
 export const layoutStyle = {

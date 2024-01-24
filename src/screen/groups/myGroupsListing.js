@@ -1,10 +1,10 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import palette from '../../theme/palette';
 import Typography from '../../components/Typography';
-import {FlatList, RefreshControl, View} from 'react-native';
+import { RefreshControl, View} from 'react-native';
 import {layoutPadding} from '../../components/Layout/layoutStyle';
-import {GET_GROUPS_LIST} from '../../store/types';
+import {GET_GROUPS_LIST, GET_MY_GROUPS_LIST} from '../../store/types';
 import {API_URL, REQUEST_METHOD} from '../../api/constants';
 import useCRUD from '../../hooks/useCRUD';
 import {Card} from 'react-native-paper';
@@ -14,26 +14,43 @@ import Avatar from '../../components/Avatar';
 import CustomButton from '../../components/CustomButton';
 import {Icon} from '../../components/icon';
 import GroupItemSkeleton from './groupItemSkeleton';
-const MyGroupsListing = () => {
-  const [refreshing, setRefreshing] = useState(false);
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {UI_ROUTES} from '../../lib/routeConstants';
+import useAuthUser from '../../hooks/useAuthUser';
+import {ListEmptyComponent} from '../../components/ListEmptyComponent';
+import useQuery from '../../hooks/useQuery';
+import FlatList from '../../components/FlatList/FlatList';
 
-  const [groups, , groupsLoading, getGroups, clearGroupsData] = useCRUD({
-    id: `${GET_GROUPS_LIST}-myGroup`,
-    url: `${API_URL.groupsList}`,
+const ListEmpty = () => (
+  <ListEmptyComponent emptyMessage={'No Groups To Show'} />
+);
+
+const MyGroupsListing = props => {
+  const navigation = useNavigation();
+  const [refreshing, setRefreshing] = useState(false);
+  const [user] = useAuthUser();
+
+  const [
+    myGroups,
+    myGroupsError,
+    myGroupsLoading,
+    page,
+    ,
+    handlePageChange,
+    resetList,
+  ] = useQuery({
+    listId: GET_MY_GROUPS_LIST,
+    url: API_URL.groupsList,
     type: REQUEST_METHOD.get,
+    queryParams: {_embed: true, user_id: user?.id},
   });
-  useEffect(() => {
-    getGroups({_embed:true});
-  }, []);
-  useEffect(() => {
-    if (groups) {
-      setRefreshing(false);
-    }
-  }, [groups]);
-  const onRefresh = () => {
-    setRefreshing(true);
-    getGroups({_embed:true});
-  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // getMyGroups({_embed: true, user_id: user?.id});
+    }, []),
+  );
+
 
   const renderGroupSkeletonList = () => {
     const totalSkeletons = Array(10).fill(null);
@@ -42,6 +59,7 @@ const MyGroupsListing = () => {
         data={totalSkeletons}
         renderItem={GroupItemSkeleton}
         ItemSeparatorComponent={<View style={{height: 20}} />}
+        keyExtractor={(item, index) => index}
         contentContainerStyle={{
           paddingBottom: verticalScale(30),
           paddingTop: 25,
@@ -51,11 +69,26 @@ const MyGroupsListing = () => {
     );
   };
 
+  const onItemClick = useCallback(
+    ({item}) => {
+      const {id, _embedded: {user} = {}} = item || {};
+      navigation.navigate(UI_ROUTES.groupDetail, {
+        id,
+        author: user?.[0] || {},
+        groupDetail: item,
+      });
+    },
+    [navigation],
+  );
   const renderItem = ({item, index}) => {
     // return <GroupItemSkeleton/>
     return (
       <View>
-        <Card style={{backgroundColor: palette.background.paper}}>
+        <Card
+          style={{backgroundColor: palette.background.paper}}
+          onPress={() => {
+            onItemClick({item});
+          }}>
           <View style={{position: 'relative'}}>
             {/* Cover Image */}
             <Image
@@ -89,7 +122,7 @@ const MyGroupsListing = () => {
           </View>
           <Card.Content style={{paddingBottom: verticalScale(28)}}>
             <View style={{paddingTop: verticalScale(80), alignItems: 'center'}}>
-              <Typography variant={'titleLarge'}>Sports Player</Typography>
+              <Typography variant={'titleLarge'}>{item?.name}</Typography>
               <View
                 style={{
                   flexDirection: 'row',
@@ -159,22 +192,28 @@ const MyGroupsListing = () => {
         backgroundColor: palette.background.default,
         flex: 1,
       }}>
-      <View>
-        {groupsLoading && !groups ? (
+      <View style={{flex: 1}}>
+        {myGroupsLoading && !myGroups ? (
           renderGroupSkeletonList()
         ) : (
           <FlatList
-            data={groups}
+            data={myGroups?.results}
             renderItem={renderItem}
             ItemSeparatorComponent={<View style={{height: 20}} />}
             contentContainerStyle={{
               paddingBottom: verticalScale(30),
               paddingTop: 25,
               ...layoutPadding,
+              ...(myGroups?.results?.length ? {} : {flex: 1}),
             }}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
+            ListEmptyComponent={ListEmpty}
+            error={myGroupsError}
+            loading={myGroupsLoading}
+            pagination={true}
+            page={page}
+            totalPages={myGroups?.totalPages}
+            handlePageChange={handlePageChange}
+            onRefresh={resetList}
           />
         )}
       </View>

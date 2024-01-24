@@ -1,20 +1,22 @@
 import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { Provider } from 'react-redux';
-import { persistor, store } from './src/store';
-import { PaperProvider } from 'react-native-paper';
+import {NavigationContainer} from '@react-navigation/native';
+import {Provider} from 'react-redux';
+import {persistor, store} from './src/store';
+import {PaperProvider} from 'react-native-paper';
 import NetworkWrapper from './src/components/NetworkWrapper';
-import { getLocalStorage } from './src/lib/asyncStorage';
+import {getLocalStorage} from './src/lib/asyncStorage';
 import palette from './src/theme/palette';
-import { StatusBar } from 'react-native';
+import {StatusBar} from 'react-native';
 import AppAuthenticator from './src/authenticator';
-import { PersistGate } from 'redux-persist/integration/react';
-// import { ZoomVideoSdkProvider, useZoom,  EventType } from '@zoom/react-native-videosdk';
+import {PersistGate} from 'redux-persist/integration/react';
+import SnackBar from './src/components/SnackBar';
+import Events from './src/lib/events';
+
 const theme = {
   colors: {
     primary: '#f1a08f',
     onPrimary: 'rgb(255, 255, 255)',
-    primaryContainer: 'rgb(240, 219, 255)',
+    primaryContainer: '#f1a08f',
     onPrimaryContainer: 'rgb(44, 0, 81)',
     secondary: 'rgb(102, 90, 111)',
     onSecondary: 'rgb(255, 255, 255)',
@@ -57,53 +59,41 @@ const theme = {
 };
 
 export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = React.useState(null);
+  const [snackbarData, setSnackbarData] = React.useState({});
 
-  React.useEffect(() => {
-    if (isAuthenticated !== null) {
-      // setTimeout(() => {
-      //   LottieSplashScreen.hide();
-      // }, 0);
-    }
-  }, [isAuthenticated]);
-  const checkAuthentication = async () => {
-    try {
-      // Fetch the value from AsyncStorage
-      const storedIsAuthenticated = await getLocalStorage({
-        key: 'isAuthenticated',
-      });
-      setTimeout(() => {
-        setIsAuthenticated(storedIsAuthenticated === 'true');
-      }, 3000);
-    } catch (error) {
-      console.error('Error reading AsyncStorage:', error);
-    }
-  };
-
-  const updateAuthentication = value => {
-    setIsAuthenticated(value);
-  };
-  React.useEffect(() => {
-    // checkAuthentication();
+  const hideSnackbar = React.useCallback(() => {
+    setSnackbarData(current => ({type: current.type}));
   }, []);
+
+  const showSnackbar = React.useCallback(data => {
+    setSnackbarData({
+      message: data.message,
+      type: data.severity,
+    });
+  }, []);
+  React.useEffect(() => {
+    Events.on('showSnackbar', 'snackbar', showSnackbar);
+  }, [showSnackbar]);
+
   return (
     <>
       <StatusBar
         barStyle="dark-content" // or "light-content"
         backgroundColor={palette.background.default} // Set your desired background color
       />
+
       <NetworkWrapper>
         <PaperProvider theme={theme}>
           <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
-              {/* <ZoomVideoSdkProvider > */}
-                <NavigationContainer>
-                  <AppAuthenticator
-                    isAuthenticated={false}
-                    updateAuthentication={updateAuthentication}
-                  />
-                </NavigationContainer>
-              {/* </ZoomVideoSdkProvider> */}
+              <NavigationContainer>
+                <AppAuthenticator />
+                <SnackBar
+                  type={snackbarData.type}
+                  message={snackbarData.message}
+                  hideSnackbar={hideSnackbar}
+                />
+              </NavigationContainer>
             </PersistGate>
           </Provider>
         </PaperProvider>

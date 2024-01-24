@@ -1,11 +1,14 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { Controller } from 'react-hook-form';
+import {Controller} from 'react-hook-form';
 
 import cloneDeep from 'lodash/cloneDeep';
 import Loader from 'src/components/Loader';
 import Autocomplete from '../../Autocomplete';
-import { TextInput } from 'react-native-paper';
+import {HelperText, TextInput} from 'react-native-paper';
+import palette from '../../../theme/palette';
+import {PaperSelect} from 'react-native-paper-select';
+import isFunction from 'lodash/isFunction';
 
 const FormAutoComplete = ({
   variant,
@@ -18,63 +21,61 @@ const FormAutoComplete = ({
   loading,
   onSearch,
   multiple,
+  validateSelection,
+  style = {},
   ...restProps
 }) => {
   const handleInputChange = React.useCallback(
-    (e) => {
+    searchText => {
       setValue(register?.name, '');
-      onSearch(e);
+      onSearch(searchText);
     },
-    [onSearch, register?.name, setValue]
+    [onSearch, register?.name, setValue],
+  );
+  const [selectedValues, setSelectedValues] = React.useState({
+    text: '',
+    selectedList: [],
+  });
+
+  const handleValidateSelection = React.useCallback(
+    (selected, onChange) => {
+      if (isFunction(validateSelection)) {
+        const isSelectionValid = validateSelection(selected, restProps);
+        if (isSelectionValid) {
+          setSelectedValues(selected);
+          onChange(selected.selectedList);
+        }
+      } else {
+        setSelectedValues(selected);
+        onChange(selected.selectedList);
+      }
+    },
+    [restProps, validateSelection],
   );
   return (
     <Controller
       control={control}
       {...register}
-      render={({ field, fieldState: { error } }) => {
-        const { ref, onChange, value } = field;
+      render={({field, fieldState: {error}}) => {
+        const {onChange} = field;
         return (
-          <Autocomplete
-            size="small"
-            id={variant}
-            options={data}
-            {...field}
-            onChange={(newValue) => {
-              setValue(register?.name, newValue);
-              onChange(newValue);
-            }}
-            multiple={multiple}
-            onFocus={getOptions}
-            renderInput={(params) => (
-              <TextInput
-                {...params}
-                label={label || null}
-                error={error?.message}
-                helperText={error?.message || null}
-                required={restProps?.required?.value}
-                inputRef={ref}
-                onChange={handleInputChange}
-                InputProps={{
-                  ...params.InputProps,
-                  endAdornment: loading ? (
-                    <Loader type="circular" size={15} loading={loading} />
-                  ) : (
-                    params.InputProps.endAdornment
-                  ),
-                }}
-                size="small"
-              />
-            )}
-            {...restProps}
-            // eslint-disable-next-line no-nested-ternary
-            value={value ? cloneDeep(value) : multiple ? [] : ''}
-            sx={{
-              '& .MuiFormLabel-root': {
-                fontSize: '14px',
-              },
-            }}
-            noOptionsText="Type to search"
-          />
+          <>
+            <PaperSelect
+              label={label}
+              arrayList={data || []}
+              multiEnable={multiple}
+              checkboxProps={{checkboxLabelStyle: {color: palette.text.dark}}}
+              selectedArrayList={selectedValues.selectedList}
+              onSelection={selected =>
+                handleValidateSelection(selected, onChange)
+              }
+              value={selectedValues.text}
+              textInputStyle={{paddingHorizontal: 0, marginBottom: 8, ...style}}
+              {...restProps}
+              onSearch={handleInputChange}
+            />
+            <HelperText type="error">{restProps.error?.message}</HelperText>
+          </>
         );
       }}
     />

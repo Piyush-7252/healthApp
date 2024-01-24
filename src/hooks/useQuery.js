@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import {useCallback, useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 
 import Events from 'src/lib/events';
-import { setFilterData } from '../store/actions/crud';
+import {setFilterData} from '../store/actions/crud';
 import useFilterManager from './useFilterManager';
 import useCRUD from './useCRUD';
 import useAuthUser from './useAuthUser';
@@ -19,21 +19,22 @@ const useQuery = ({
   subscribeSocket,
 }) => {
   const dispatch = useDispatch();
-  const filtersData = useSelector((state) =>
-    state?.crud?.get(listId)?.get('readFilter')
+  const filtersData = useSelector(state =>
+    state?.crud?.get(listId)?.get('readFilter'),
   )?.get('data');
   const [userData] = useAuthUser();
   const [page, setPage] = useState(1);
 
-  const [dataList, , dataLoading, callDataListAPI] = useCRUD({
+  const [dataList,dataListError , dataLoading, callDataListAPI, , , pagination] = useCRUD({
     id: listId,
     url,
     type,
     responseModifier,
     subscribeSocket,
+    page,
   });
 
-  const { parsedFilters, rawFilters, sort} = filtersData || {};
+  const {parsedFilters, rawFilters, sort} = filtersData || {};
 
   const [handleFilters] = useFilterManager({
     filtersData,
@@ -41,7 +42,7 @@ const useQuery = ({
     rawFilters,
     listId,
     type,
-    setPage
+    setPage,
   });
 
   const handleOnFetchDataList = useCallback(() => {
@@ -50,17 +51,17 @@ const useQuery = ({
       sortBy: sortKey,
       page,
       limit: rowsPerPage,
-      ...(rawFilters?.searchText && { searchText: rawFilters?.searchText }),
+      ...(rawFilters?.searchText && {searchText: rawFilters?.searchText}),
       ...queryParams,
       ...parsedFilters,
     };
     if (validateQuery) {
-      const query = validateQuery({ ...params }, userData);
+      const query = validateQuery({...params}, userData);
       if (query) {
-        callDataListAPI({ ...query.params }, query?.extraURL);
+        callDataListAPI({...query.params}, query?.extraURL);
       }
     } else {
-      callDataListAPI({ ...params });
+      callDataListAPI({...params});
     }
   }, [
     callDataListAPI,
@@ -81,20 +82,20 @@ const useQuery = ({
           listId,
           {
             ...filtersData,
-            sort: { [dataKey]: order },
+            sort: {[dataKey]: order},
           },
-          type
-        )
+          type,
+        ),
       );
     },
-    [dispatch, filtersData, listId, type]
+    [dispatch, filtersData, listId, type],
   );
 
   useEffect(() => {
     handleOnFetchDataList({
       appliedFilters: parsedFilters,
       skip: page && (page - 1) * rowsPerPage,
-      page
+      page,
     });
   }, [parsedFilters, sort, page, listId]);
 
@@ -105,19 +106,25 @@ const useQuery = ({
     };
   }, [handleOnFetchDataList, listId]);
 
-  const handlePageChange = useCallback(
-    (event, newPage) => {
-      setPage(newPage)
-    },
-    []
-  );
+  const handlePageChange = useCallback(newPage => {
+    setPage(newPage);
+  }, []);
 
+  const resetList = () => {
+    if (page === 1) {
+      handleOnFetchDataList();
+    } else {
+      setPage(1);
+    }
+  };
   return [
     dataList,
+    dataListError,
     dataLoading,
     page,
     rowsPerPage,
     handlePageChange,
+    resetList,
     filtersData,
     handleFilters,
     sort,

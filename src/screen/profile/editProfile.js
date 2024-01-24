@@ -1,18 +1,12 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect} from 'react';
-import Layout from '../../components/Layout';
-import {KeyboardAvoidingView, Platform, ScrollView, View} from 'react-native';
-import Typography from '../../components/Typography';
-import {requiredField} from '../../lib/constants';
-import CustomForm from '../../components/form';
+import React from 'react';
 import {useForm} from 'react-hook-form';
-import {verticalScale} from '../../lib/utils';
-import LoadingButton from '../../components/CustomButton/loadingButton';
-import {USER_DETAILS} from '../../store/types';
-import {API_URL, REQUEST_METHOD} from '../../api/constants';
-import useCRUD from '../../hooks/useCRUD';
-import useAuthUser from '../../hooks/useAuthUser';
+import {ScrollView, View} from 'react-native';
 import CustomButton from '../../components/CustomButton';
+import Layout from '../../components/Layout';
+import CustomForm from '../../components/form';
+import useAuthUser from '../../hooks/useAuthUser';
+import {requiredField} from '../../lib/constants';
 
 export const loginFormGroups = [
   {

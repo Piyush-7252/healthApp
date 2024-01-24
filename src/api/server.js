@@ -6,6 +6,10 @@ import {triggerEvents} from 'src/lib/utils';
 // import { getEncryptedParams } from 'src/utils/encryption/Encryption';
 import {API_URL, BASE_URL} from './constants';
 import {clearLocalStorage, getLocalStorage} from '../lib/asyncStorage';
+import {showSnackbar} from '../lib/utils';
+import {errorMessage} from '../lib/errorConstants';
+import {store} from '../store';
+import {clearStoreData} from '../store/actions/crud';
 
 /**
  * Server address (for api)
@@ -20,6 +24,8 @@ const API = process.env.API
   : BASE_URL;
 
 const API_PATH = API || (PATH ? `${PATH}/` : '');
+
+const cancelTokenSource = axios.CancelToken.source();
 
 const server = axios.create({
   baseURL: API_PATH,
@@ -105,11 +111,24 @@ const refreshTokenHandler = async (err, resolve, reject) => {
 
 server.interceptors.request.use(
   async config => {
+    const {url} = config;
     // Get the token from wherever you store it (e.g., Redux state, AsyncStorage)
     const {jwt_token} =
-      JSON.parse(await getLocalStorage({key: 'userLogin'})) || {};
-    // Set the Authorization header with the Bearer token
-    config.headers.Authorization = `Bearer ${jwt_token}`;
+      store.getState().crud?.get('USER_LOGIN')?.get('create')?.get('data') ||
+      {};
+    if (!jwt_token && url === API_URL.userDetail) {
+      const CancelToken = axios.CancelToken;
+      return {
+        ...config,
+        cancelToken: new CancelToken(cancel =>
+          cancel(errorMessage.CANCELED_REQUEST),
+        ),
+      };
+    } else {
+      // Set the Authorization header with the Bearer token
+      config.headers.Authorization = `Bearer ${jwt_token}`;
+    }
+    // config.headers.Authorization = `Bearer ${jwt_token}`;
 
     return config;
   },
@@ -182,8 +201,28 @@ server.interceptors.request.use(
 //   (err) => new Promise((resolve, reject) => refreshTokenHandler(err, resolve, reject)),
 // );
 
-server.interceptors.response.use(response => response.data);
-
+// server.interceptors.response.use(response => response?.data);
+server.interceptors.response.use(
+  response => {
+    if (response?.headers?.['x-wp-total']) {
+      return {
+        results: response?.data,
+        totalPages: response?.headers?.['x-wp-totalpages'],
+        totalRecords: response?.headers?.['x-wp-total'],
+      };
+    } else {
+      return response?.data;
+    }
+  },
+  error => {
+    const {response: {data = {}} = {}} = error || {};
+    console.log('🚀 ~ file: server.js:135 ~ error:', error, data);
+    if (data.error === 'INVALID_SIGNATURE') {
+      store.dispatch(clearStoreData());
+    }
+    return Promise.reject(error);
+  },
+);
 // server.interceptors.request.use((request) => request, (error) => Promise.reject(error));
 
 // multipartServer.interceptors.response.use(

@@ -1,4 +1,4 @@
-import {put, call, all, delay} from 'redux-saga/effects';
+import {put, call, all, delay, select} from 'redux-saga/effects';
 import {batchActions} from 'redux-batched-actions';
 import {
   REQUEST_READ,
@@ -18,12 +18,20 @@ import {
   REQUEST_UPDATE,
   REQUEST_DELETE,
   REQUEST_CREATE_WITH_DEBOUNCE,
+  setListPage,
 } from '../actions/crud';
 import {createSaga, deleteSaga, updateSaga, customTakeLatest} from './helper';
 
 import api from '../../api';
 
-export const readSaga = function* ({id, url, params, responseModifier}) {
+export const readSaga = function* ({
+  id,
+  url,
+  params,
+  responseModifier,
+  page=1,
+}) {
+  console.log('🚀 ~ page:', page);
   yield put(setReadLoading(id, true));
   try {
     let response = yield call(api.get, {
@@ -33,7 +41,20 @@ export const readSaga = function* ({id, url, params, responseModifier}) {
     if (responseModifier && typeof responseModifier === 'function') {
       response = responseModifier(response);
     }
-    yield put(setReadData(id, response));
+    if (page === 1) {
+      yield put(setReadData(id, response));
+    } else if (page) {
+      const existingData = yield select(state =>
+        state?.crud?.get(id)?.get('read')?.get('data'),
+      );
+      if (existingData?.results) {
+        const newData = {
+          ...response,
+          results: [...existingData?.results, ...response?.results],
+        };
+        yield put(setReadData(id, newData));
+      }
+    }
   } catch (e) {
     console.log('<<<<<<<< readSaga >>>>>>>>>>>>>', e, e.message);
     if (e && e.message !== 'REQUEST_CANCELLED_SESSION_TIMEOUT') {

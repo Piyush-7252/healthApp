@@ -27,7 +27,7 @@ export const API_URL = {
   emailTemplates: 'email-templates',
   assistant: 'assistant',
   appointment: 'appointment',
-  practitioner: 'practitioner',
+  practitioner: 'ldlms/v1/sfwd-courses',
   patient: 'patient',
   clinicAdmin: 'clinic-admin',
   services: 'service',
@@ -90,7 +90,23 @@ export const API_URL = {
   categoiresList: 'wp/v2/ld_course_category',
   coursesListCategoryWise: 'ldlms/v2/sfwd-courses',
   groupsList: 'buddyboss/v1/groups',
-  courseWiseLesson:'ldlms/v2/sfwd-lessons'
+  courseWiseLesson: 'ldlms/v2/sfwd-lessons',
+  courseSteps: 'ldlms/v1/sfwd-courses',
+  chatList: 'buddyboss/v1/messages',
+  singleChat: 'buddyboss/v1/messages',
+  lessionDetail: 'ldlms/v2/sfwd-lessons',
+  topicDetail: 'wp/v2/sfwd-topic',
+  quizDetail: 'wp/v2/sfwd-quiz',
+  quizStatistics: 'ldlms/v2/sfwd-quiz',
+  quizLists: 'ldlms/v2/sfwd-quiz',
+  groupDiscussionList: 'buddyboss/v1/topics',
+  addDiscussion: 'buddyboss/v1/topics',
+  getComments: 'buddyboss/v1/reply',
+  addComments: 'buddyboss/v1/reply',
+  courseQuizDetail: '/buddyboss-app/learndash/v1/quiz',
+  customURL:'ldlms/v2/users',
+  courseProgress:'course-progress',
+
 };
 export const OPENTOK_API_KEY = process.env.REACT_APP_OPENTOK_API_KEY;
 export const REACT_APP_COLLECTJS_API_KEY =
