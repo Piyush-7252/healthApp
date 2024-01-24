@@ -1,5 +1,5 @@
 import React from 'react';
-import CoursesStack from './CouresStack';
+import CoursesStack from './CourseStack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Icon} from '../components/icon';
 import SettingsStack from './SettingsStack';
@@ -7,6 +7,9 @@ import ProfileStack from './ProfileStack';
 import BottomTabBar from './ButtomBar';
 import GroupsStack from './GroupsStack';
 import ChatStack from './ChatStack';
+import {UI_ROUTES} from '../lib/routeConstants';
+import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
+import CalendarStack from './CalendarStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -22,6 +25,9 @@ const AuthenticatedNavigator = () => {
   const groupsTabBarIcon = ({color, size}) => (
     <Icon name="group" color={color} size={size} />
   );
+  const calendarTabBarIcon = ({color, size}) => (
+    <Icon name="calendar" color={color} size={size} />
+  );
   const chatsTabBarIcon = ({color, size}) => (
     <Icon name="comments" color={color} size={size} />
   );
@@ -30,7 +36,15 @@ const AuthenticatedNavigator = () => {
   );
 
   return (
-    <Tab.Navigator screenOptions={{headerShown: false}} tabBar={BottomTabBar}>
+    <Tab.Navigator
+      screenOptions={({route}) => ({
+        tabBarVisible: (route => {
+          const routeName = getFocusedRouteNameFromRoute(route) ?? 'ChatTab';
+          return routeName !== UI_ROUTES.chatScreen;
+        })(route),
+        headerShown: false,
+      })}
+      tabBar={BottomTabBar}>
       <Tab.Screen
         name="Course"
         component={CoursesStack}
@@ -47,6 +61,14 @@ const AuthenticatedNavigator = () => {
           title: 'Groups',
         }}
       />
+      {/* <Tab.Screen
+        name="Calendar"
+        component={CalendarStack}
+        options={{
+          tabBarIcon: calendarTabBarIcon,
+          title: 'Calendar',
+        }}
+      /> */}
       <Tab.Screen
         name="ChatStack"
         component={ChatStack}

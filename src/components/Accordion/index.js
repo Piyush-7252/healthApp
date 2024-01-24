@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, FlatList, StyleSheet} from 'react-native';
 import Collapsible from 'react-native-collapsible';
@@ -5,8 +6,9 @@ import Typography from '../Typography';
 import * as Animatable from 'react-native-animatable';
 import {TouchableRipple} from 'react-native-paper';
 import {Icon} from '../icon';
+import {scale} from '../../lib/utils';
 
-const Accordion = ({title, items, itemRendere, addOnIcon}) => {
+const Accordion = ({title, items, itemRendere, addOnIcon, rightAffix}) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   const toggleAccordion = () => {
@@ -36,11 +38,22 @@ const Accordion = ({title, items, itemRendere, addOnIcon}) => {
   return (
     <View>
       <TouchableRipple onPress={toggleAccordion}>
-        <View style={styles.header}>
-          <Typography variant="labelLarge">{title}</Typography>
-          <View style={{flexDirection: 'row', gap: 10}}>
-            {addOnIcon && addOnIcon}
-            <Icon name={isCollapsed ? 'chevron-down' : 'chevron-up'} />
+        <View style={{...styles.header}}>
+          <Typography variant="labelLarge" style={{width: '50%'}}>
+            {title}
+          </Typography>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 10,
+              justifyContent: 'center',
+            }}>
+            {rightAffix ? rightAffix : null}
+            <View style={{flexDirection: 'row', gap: 2, alignItems: 'center'}}>
+              {addOnIcon && addOnIcon}
+              <Icon name={isCollapsed ? 'chevron-down' : 'chevron-up'} />
+            </View>
           </View>
         </View>
       </TouchableRipple>
@@ -60,7 +73,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 10,
+    paddingHorizontal: 10,
     borderBottomWidth: 1,
     borderColor: '#CCCCCC',
   },

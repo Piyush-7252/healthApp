@@ -1,9 +1,13 @@
+/* eslint-disable react-native/no-inline-styles */
 import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
 import React, {useState} from 'react';
 import {Controller} from 'react-hook-form';
+import { View } from 'react-native';
 import {TextInput} from 'react-native-paper';
 import {TimePickerModal} from 'react-native-paper-dates';
+import Typography from '../../Typography';
+import palette from '../../../theme/palette';
 
 const FormTimePicker = ({
   label,
@@ -23,13 +27,13 @@ const FormTimePicker = ({
       render={({field, fieldState: {error}}) => {
         const {ref} = field;
         return (
-          <>
+          <View>
             <TextInput
               label={label}
               value={field.value}
               onTouchStart={() => setTimePickerVisible(true)}
               error={error?.message}
-              style={{paddingHorizontal: 0,marginBottom: 8, ...style}}
+              style={{paddingHorizontal: 0, marginBottom: 8, ...style}}
               {...restProps}
             />
             <TimePickerModal
@@ -48,10 +52,14 @@ const FormTimePicker = ({
                 setValue(register?.name, formattedTime);
                 setTimePickerVisible(false);
               }}
-              inputFontSize={40}
               {...restProps}
             />
-          </>
+            {error && (
+              <Typography style={{color: palette.error.main}}>
+                {error.message}
+              </Typography>
+            )}
+          </View>
         );
       }}
     />

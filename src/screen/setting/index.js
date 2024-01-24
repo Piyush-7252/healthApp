@@ -1,27 +1,19 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {TouchableOpacity, View} from 'react-native';
-import Header from '../../components/Layout/header';
-import {layoutPadding} from '../../components/Layout/layoutStyle';
-import Typography from '../../components/Typography';
+import {Divider} from 'react-native-paper';
 import Layout from '../../components/Layout';
-import {Divider, TouchableRipple} from 'react-native-paper';
-import {verticalScale} from '../../lib/utils';
+import Typography from '../../components/Typography';
 import {Icon} from '../../components/icon';
+import {verticalScale} from '../../lib/utils';
+import {clearStoreData} from '../../store/actions/crud';
 import {store} from '../../store/index';
-import {
-  clearData,
-  clearReadData,
-  clearStoreData,
-} from '../../store/actions/crud';
-import {clearLocalStorage} from '../../lib/asyncStorage';
-import {USER_DETAILS} from '../../store/types';
+
 const handleLogout = async () => {
   const dispatch = store.dispatch;
-  await clearLocalStorage();
   dispatch(clearStoreData());
-
-  // setLocalStorage({key: 'isAuthenticated', value: 'false'});
 };
+
 const lists = [
   // {
   //   name: 'Edit Profile',

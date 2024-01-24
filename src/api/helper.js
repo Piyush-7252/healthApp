@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-param-reassign */
 
+import { cloneDeep } from 'lodash';
 import { dateFormats, medicineStatus } from 'src/lib/constants';
 import { calculateIdealWeight, convertWithTimezone } from 'src/lib/utils';
 
@@ -100,6 +101,18 @@ export const responseModifierAppointments = (data) => {
     data = result;
   }
   return data;
+};
+
+export const courseStepsProgressModifier = data => {
+  const clonedData = cloneDeep(data);
+  const results = clonedData.results?.[0]?.reduce((acc, item) => {
+    // console.log("🚀 ~ results ~ item:", item)
+    if (!acc[item?.step]) {
+      acc[item?.step] = item;
+    }
+    return acc;
+  }, {});
+  return results;
 };
 
 export default formDataParser;

@@ -8,7 +8,7 @@ const Stack = createStackNavigator();
 
 const SettingsStack = () => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={{headerShown:false}}>
       <Stack.Screen name={UI_ROUTES.settings} component={Settings} />
 
       {/* Add more screens as needed */}

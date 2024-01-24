@@ -1,44 +1,13 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import TextField from '@mui/material/TextField';
+import {TextInput as RNTextInput} from 'react-native-paper';
+import palette from '../../theme/palette';
 
-const TextInput = ({
-  sx = {},
-  ...restProps
-} = {}) => (
-      <TextField
-        size="small"
-        id="outlined-basic"
-        variant="outlined"
-        fullWidth
-        sx={{
-          '& .MuiFormLabel-root': {
-            fontSize: '14px',
-          },
-          ...sx,
-        }}
-        {...restProps}
-      />
-  );
-
-TextInput.defaultProps = {
-  type: 'text',
-  disabled: false,
-  error: '',
-  required: false,
-  formVariant: 'outlined-basic',
-  variant: 'outlined',
-  InputProps: {},
-};
-
-TextInput.propTypes = {
-  type: PropTypes.string,
-  disabled: PropTypes.bool,
-  required: PropTypes.bool,
-  error: PropTypes.string,
-  formVariant: PropTypes.string,
-  variant: PropTypes.string,
-  InputProps: PropTypes.instanceOf(Object),
-};
+const TextInput = props => (
+  <RNTextInput
+    placeholder="Type your message here ..."
+    placeholderTextColor={palette.text.secondary}
+    {...props}
+  />
+);
 
 export default TextInput;

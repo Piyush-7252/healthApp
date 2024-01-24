@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { View} from 'react-native';
-import { TextInput as PaperTextInput, useTheme } from 'react-native-paper';
-import { Controller } from 'react-hook-form';
+/* eslint-disable react-native/no-inline-styles */
+import React, {useState} from 'react';
+import {View} from 'react-native';
+import {TextInput as PaperTextInput, useTheme} from 'react-native-paper';
+import {Controller} from 'react-hook-form';
 import Typography from '../../Typography';
 
-const CustomTextInput =({
+const CustomTextInput = ({
   type,
   disabled,
   required,
@@ -18,6 +19,7 @@ const CustomTextInput =({
   setValue,
   style = {},
   isShrink = false,
+  containerStyle,
   ...restProps
 }) => {
   const theme = useTheme();
@@ -32,24 +34,18 @@ const CustomTextInput =({
       control={control}
       {...register}
       ref={null}
-      render={({ field, fieldState: { error } }) => {
-        let shrinkProps = {};
-        if (field.value || isShrink) {
-          shrinkProps = { shrink: true };
-        }
+      render={({field, fieldState: {error}}) => {
         return (
-          <View>
+          <View style={{...containerStyle}}>
             <PaperTextInput
               secureTextEntry={showPassword ? false : type === 'password'}
               label={textLabel}
               disabled={disabled}
-              
-              // mode="outlined"
               error={!!error}
               {...restProps}
               {...field}
               onChangeText={field?.onChange}
-              style={{paddingHorizontal:0,  marginBottom: 8,...style, }}
+              style={{paddingHorizontal: 0, marginBottom: 8, ...style}}
               right={
                 type === 'password' ? (
                   <PaperTextInput.Icon
@@ -58,9 +54,12 @@ const CustomTextInput =({
                   />
                 ) : null
               }
-              
             />
-            {error && <Typography style={{ color: theme.colors.error }}>{error.message}</Typography>}
+            {error && (
+              <Typography style={{color: theme.colors.error}}>
+                {error.message}
+              </Typography>
+            )}
           </View>
         );
       }}

@@ -1,15 +1,14 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {Button} from 'react-native-paper';
-import {scale, verticalScale} from '../../lib/utils';
 
 const CustomButton = ({
   onClick,
   label,
   variant,
   style,
-  children,
   onPress,
+  children,
   ...restProps
 }) => (
   <Button
@@ -30,7 +29,7 @@ const CustomButton = ({
 );
 
 CustomButton.defaultProps = {
-  label: 'hekko',
+  label: '',
   onClick: () => {},
   variant: 'primary',
 };

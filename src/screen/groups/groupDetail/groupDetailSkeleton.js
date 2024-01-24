@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {verticalScale} from '../../../lib/utils';
 import {FlatList, View} from 'react-native';
@@ -13,6 +14,7 @@ function GroupDetailSkeleton({data}={}) {
       ItemSeparatorComponent={<View style={{height: 20}} />}
       data={data}
       renderItem={renderItem}
+      keyExtractor={(item, index) => index}
       contentContainerStyle={{
         paddingVertical: verticalScale(16),
         ...layoutPadding,

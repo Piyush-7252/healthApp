@@ -1,23 +1,32 @@
+// LoadingScreen.js
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import LottieView from 'lottie-react-native';
+import {View, Text, StyleSheet} from 'react-native';
+import {ActivityIndicator} from 'react-native-paper';
 
-const LoadingScreen = () => {
+const LoadingScreen = ({isVisible}) => {
+  if (!isVisible) {
+    return null;
+  }
+
   return (
-    <View style={styles.container}>
-      <LottieView
-        source={require('./path/to/your/loading-animation.json')}
-        autoPlay
-        loop
-      />
+    <View style={styles.overlay}>
+      <ActivityIndicator size="large" />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
+    alignItems: 'center',
+    zIndex:999
+  },
+  container: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
     alignItems: 'center',
   },
 });

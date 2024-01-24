@@ -1,7 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {Button, TouchableRipple} from 'react-native-paper';
-import {scale, verticalScale} from '../../lib/utils';
+import {TouchableRipple} from 'react-native-paper';
 import palette from '../../theme/palette';
 
 const ActionButton = ({
@@ -23,7 +22,7 @@ const ActionButton = ({
       fontSize: 20,
       textAlign: 'center',
       borderRadius: 50,
-      backgroundColor:palette.background.main,
+      backgroundColor: palette.background.main,
       ...style,
     }}
     {...restProps}>

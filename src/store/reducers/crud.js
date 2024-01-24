@@ -17,6 +17,7 @@ import {
   CLEAR_READ_DATA,
   SET_FILTER_CREATE,
   CLEAR_STORE,
+  SET_LIST_PAGE,
 } from '../actions/crud';
 
 const initialState = Map({});
@@ -41,6 +42,8 @@ const actionsMap = {
     state.setIn([id, 'create', 'error'], error),
   [SET_FILTER_CREATE]: (state, {id, filtersData}) =>
     state.setIn([id, 'readFilter', 'data'], filtersData),
+  [SET_LIST_PAGE]: (state, {id, page}) =>
+    state.setIn([id, 'currentPage', 'data'], page),
 
   [SET_DATA_DELETE]: (state, {id, data}) =>
     state.setIn([id, 'delete', 'data'], data),

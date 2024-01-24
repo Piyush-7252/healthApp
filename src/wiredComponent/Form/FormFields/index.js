@@ -1,171 +1,55 @@
-const { API_URL } = require('src/api/constants');
+import {API_URL} from '../../../api/constants';
 
-export const WiredEnumMasterField = (otherInfo) => ({
-  name: 'master',
-  label: 'Master Type',
-  placeHolder: 'Select Master Type',
-  inputType: 'wiredSelect',
-  url: API_URL.getEnumMasterType,
-  labelAccessor: 'name',
-  valueAccessor: 'code',
-  params: { isActive: true },
-  ...otherInfo,
-});
+const groupResponseModifier = data => {
+  const newData = data.reduce((acc, item) => {
+    acc.push({value: item?.name, _id: item?.id});
+    return acc;
+  }, []);
+  console.log('🚀 ~ file: index.js:8 ~ newData ~ newData:', newData);
+  return newData;
+};
 
-export const WiredMasterField = ({
-  label,
-  name,
-  filter,
-  code,
-  valueAccessor,
-  ...otherInfo
-}) => ({
-  name: name || 'master',
-  label,
-  inputType: 'wiredSelect',
-  url: `${API_URL.getMasters}/${code}`,
-  labelAccessor: 'name',
-  valueAccessor: valueAccessor || 'code',
-  params: { isActive: true, ...filter },
-  code,
-  ...otherInfo,
-});
+const memberResponseModifier = data => {
+  const newData = data.reduce((acc, item) => {
+    acc.push({value: item?.name, _id: item?.id});
+    return acc;
+  }, []);
+  console.log('🚀 ~ file: index.js:8 ~ newData ~ newData:', newData);
+  return newData;
+};
 
-export const WiredPractitionerField = ({
-  label,
-  name,
-  filter,
-  code,
-  ...otherInfo
-}) => ({
-  name: name || 'practitioners',
+export const WiredGroupField = ({label, name, filter, code, ...otherInfo}) => ({
+  name: name || 'groups',
   label,
   inputType: 'wiredSelect',
-  url: API_URL.practitioner,
+  url: API_URL.groupsList,
   labelAccessor: 'name',
   valueAccessor: 'id',
-  params: { isActive: true, ...filter },
+  params: {isActive: true, ...filter},
   code,
   fetchInitial: true,
   cache: false,
+  responseModifier: groupResponseModifier,
   ...otherInfo,
 });
 
-export const WiredLocationField = ({
+export const WiredMemberField = ({
   label,
   name,
   filter,
   code,
-  url,
   ...otherInfo
 }) => ({
-  name: name || 'location',
-  label: label || 'Location',
-  inputType: 'wiredSelect',
-  url: url || API_URL.practiceLocation,
-  labelAccessor: 'name',
-  valueAccessor: 'id',
-  params: { isActive: true, ...filter },
-  code,
-  cache: false,
-  ...otherInfo,
-});
-
-export const WiredServiceField = ({
-  label,
-  name,
-  filter,
-  code,
-  url,
-  ...otherInfo
-}) => ({
-  name: name || 'service',
+  name: name || 'members',
   label,
   inputType: 'wiredSelect',
-  url: url || API_URL.services,
+  url: API_URL.groupsList,
   labelAccessor: 'name',
   valueAccessor: 'id',
-  params: { isActive: true, ...filter },
+  params: {isActive: true, ...filter},
   code,
   fetchInitial: true,
   cache: false,
+  responseModifier: memberResponseModifier,
   ...otherInfo,
-});
-
-export const WiredSelect = ({
-  label,
-  name,
-  filter,
-  code,
-  url,
-  labelAccessor,
-  ...otherInfo
-}) => ({
-  name,
-  label,
-  inputType: 'wiredSelect',
-  url,
-  labelAccessor,
-  code,
-  ...otherInfo,
-});
-
-export const WiredPatientAutoComplete = ({
-  label,
-  name,
-  url,
-  params,
-  required,
-  dependencies,
-  ...otherProps
-}) => ({
-  name: name || 'patient',
-  label: label || 'Patient Name',
-  inputType: 'wiredAuto',
-  url: url || API_URL.getPatients,
-  params,
-  required,
-  dependencies,
-  disableClearable: true,
-  ...otherProps,
-});
-
-export const WiredMedicineAutoComplete = ({
-  label,
-  name,
-  url,
-  params,
-  required,
-  dependencies,
-  ...otherProps
-}) => ({
-  name: name || 'medicine',
-  label: label || 'Medicine',
-  inputType: 'wiredAuto',
-  url: url || API_URL.medicine,
-  params,
-  required,
-  dependencies,
-  disableClearable: true,
-  ...otherProps,
-});
-
-export const WiredPractitionerOrAssistantAutoComplete = ({
-  label,
-  name,
-  url,
-  params,
-  required,
-  dependencies,
-  ...otherProps
-}) => ({
-  name: name || 'practitioner',
-  label: label || 'Practitioner',
-  inputType: 'wiredAuto',
-  url: url || API_URL.practitioner,
-  params,
-  required,
-  dependencies,
-  disableClearable: true,
-  ...otherProps,
 });

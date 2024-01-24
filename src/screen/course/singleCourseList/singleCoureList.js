@@ -1,11 +1,13 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useCallback, useEffect, useState} from 'react';
-import {FlatList, RefreshControl, View} from 'react-native';
+import {RefreshControl, View} from 'react-native';
 import {layoutPadding} from '../../../components/Layout/layoutStyle';
 import palette from '../../../theme/palette';
 import CourseItemSkeleton from '../coureItemSkeleton';
 import SingleCourseItem from './singleCourseItem';
+import {ListEmptyComponent} from '../../../components/ListEmptyComponent';
+import FlatList from '../../../components/FlatList/FlatList';
 
 const SingleItemCourseList = props => {
   const {
@@ -13,14 +15,15 @@ const SingleItemCourseList = props => {
     coursesLoading,
     onItemClick = () => {},
     onComponentRefresh = () => {},
+    ...rest
   } = props || {};
-  const [refreshing, setRefreshing] = useState(false);
+    console.log("🚀 ~ SingleItemCourseList ~ rest:", rest)
 
   const renderCourseSkeletonList = () => {
     const totalSkeletons = Array(10).fill(null);
     return (
       <FlatList
-        style={{flex: 1}}
+        // style={{flex: 1}}
         ItemSeparatorComponent={() => <View style={{height: 20}} />}
         renderItem={CourseItemSkeleton}
         keyExtractor={(item, index) => index}
@@ -42,38 +45,7 @@ const SingleItemCourseList = props => {
   );
 
   const onRefresh = () => {
-    setRefreshing(true);
     onComponentRefresh();
-  };
-
-  useEffect(() => {
-    setRefreshing(false);
-  }, [courses]);
-
-  const CourseList = () => {
-    return (
-      <>
-        {coursesLoading && !courses ? (
-          renderCourseSkeletonList()
-        ) : (
-          <FlatList
-            style={{flex: 1}}
-            ItemSeparatorComponent={() => <View style={{height: 20}} />}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-            data={courses || []}
-            contentContainerStyle={{
-              paddingBottom: 25,
-              paddingTop: 25,
-              ...layoutPadding,
-            }}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-          />
-        )}
-      </>
-    );
   };
 
   return (
@@ -83,7 +55,26 @@ const SingleItemCourseList = props => {
         backgroundColor: palette.background.default,
         // ...layoutPadding,
       }}>
-      <CourseList />
+      {coursesLoading && !courses ? (
+        renderCourseSkeletonList()
+      ) : (
+        <FlatList
+          ItemSeparatorComponent={() => <View style={{height: 20}} />}
+          renderItem={renderItem}
+          data={courses?.results || []}
+          contentContainerStyle={{
+            paddingBottom: 25,
+            paddingTop: 25,
+            ...layoutPadding,
+            ...(!courses?.results?.length ? {flex: 1} : {}),
+          }}
+          ListEmptyComponent={() => (
+            <ListEmptyComponent emptyMessage={'No Items To Show'} />
+          )}
+          onRefresh={onRefresh}
+          {...rest}
+        />
+      )}
     </View>
   );
 };

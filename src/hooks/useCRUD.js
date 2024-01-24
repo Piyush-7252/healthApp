@@ -16,6 +16,7 @@ import {
   requestCreateWithDebounce,
   setReadData,
 } from '../store/actions/crud';
+import {errorMessage} from '../lib/errorConstants';
 
 export default function useCRUD({
   id,
@@ -25,6 +26,7 @@ export default function useCRUD({
   responseModifier,
   subscribeSocket,
   handleSocketData,
+  page,
 }) {
   const dispatch = useDispatch();
   const response = useSelector(state => state?.crud?.get(id)?.get(type));
@@ -42,9 +44,11 @@ export default function useCRUD({
       if (subscribeSocket) {
         Object.assign(params, {subscribeSocket});
       }
-      dispatch(requestRead(id, `${url}${extraURL}`, params, responseModifier));
+      dispatch(
+        requestRead(id, `${url}${extraURL}`, params, responseModifier, page),
+      );
     },
-    [dispatch, id, url, subscribeSocket, responseModifier],
+    [dispatch, id, url, subscribeSocket, responseModifier, page],
   );
   /* ******************* */
   /* Function to make read request to server for type CREATE */
@@ -112,20 +116,26 @@ export default function useCRUD({
   );
 
   useEffect(() => {
-    const errorMessage =
-      response?.get('error')?.response?.data?.message || message;
-    if (shouldClearError && errorMessage) {
-      if (errorMessage === 'Token expired.') {
+    const serverErrorMessage =
+      response?.get('error')?.response?.data?.message ||
+      response?.get('error')?.response?.data?.error_description ||
+      response?.get('error')?.response?.data?.error ||
+      message;
+
+    if (shouldClearError && serverErrorMessage) {
+      if (serverErrorMessage === 'Token expired.') {
         // localStorage.clear();
         showSnackbar({
           message: 'Session expired',
           severity: 'error',
         });
       } else {
-        showSnackbar({
-          message: errorMessage,
-          severity: 'error',
-        });
+        if (errorMessage.CANCELED_REQUEST !== serverErrorMessage) {
+          showSnackbar({
+            message: serverErrorMessage,
+            severity: 'error',
+          });
+        }
       }
       clear(type === REQUEST_METHOD.get);
     }
@@ -155,6 +165,8 @@ export default function useCRUD({
   return [
     response?.get('data'),
     response?.get('error')?.response?.data?.message ||
+      response?.get('error')?.response?.data?.error_description ||
+      response?.get('error')?.response?.data?.error ||
       message ||
       response?.get('error'),
     !!response?.get('loading'),

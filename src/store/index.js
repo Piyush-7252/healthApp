@@ -69,9 +69,9 @@ const stateReconciler = (
   if (filteredState.crud && filteredState.crud.getIn([USER_DETAILS, 'read'])) {
     filteredState.crud = filteredState.crud.deleteIn([USER_DETAILS, 'read']);
   }
-  if (filteredState.crud && filteredState.crud.getIn([USER_LOGIN, 'read'])) {
-    filteredState.crud = filteredState.crud.deleteIn([USER_LOGIN, 'read']);
-  }
+  // if (filteredState.crud && filteredState.crud.getIn([USER_LOGIN, 'read'])) {
+  //   filteredState.crud = filteredState.crud.deleteIn([USER_LOGIN, 'read']);
+  // }
 
   // Add more conditions as needed for other states
 

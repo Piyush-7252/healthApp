@@ -44,14 +44,17 @@ export const SET_LOADING_DELETE = '@crud/SET_LOADING_DELETE';
 export const CLEAR_DATA = '@crud/CLEAR_DATA';
 export const CLEAR_READ_DATA = '@crud/CLEAR_READ_DATA';
 export const SET_FILTER_CREATE = '@crud/SET_FILTER_CREATE';
+export const SET_LIST_PAGE = '@crud/SET_LIST_PAGE';
+
 export const CLEAR_STORE = '@crud/CLEAR_STORE';
 
-export const requestRead = (id, url, params, responseModifier) => ({
+export const requestRead = (id, url, params, responseModifier,page) => ({
   type: REQUEST_READ,
   id,
   url,
   params,
   responseModifier,
+  page,
 });
 
 export const setReadData = (id, data) => ({
@@ -77,6 +80,12 @@ export const setFilterData = (id, filtersData, type) => ({
   id,
   filtersData,
   method: type,
+});
+
+export const setListPage = (id, page) => ({
+  type: SET_LIST_PAGE,
+  id,
+  page,
 });
 
 export const requestCreate = requestCreateFunc(REQUEST_CREATE);

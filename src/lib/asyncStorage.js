@@ -16,6 +16,7 @@ AsyncStorage.getItem('userLogin').then((res) => {
 const getLocalStorage = async ({key} = {}) => {
   try {
     const value = await AsyncStorage.getItem(key);
+    console.log("🚀 ~ file: asyncStorage.js:19 ~ getLocalStorage ~ value:", value)
     return value;
   } catch (e) {
     console.log("🚀 ~ file: asyncStorage.js:21 ~ getLocalStorage ~ e:", e)

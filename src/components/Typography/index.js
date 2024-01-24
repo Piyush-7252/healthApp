@@ -5,7 +5,7 @@ import palette from '../../theme/palette';
 
 const Typography = ({children, style = {}, ...props}) => (
   <Text
-    style={{color: palette.text.primary, ...style,flexWrap:'wrap',}}
+    style={{color: palette.text.primary, ...style}}
     {...props}
     data-testid="typography-test">
     {children}
