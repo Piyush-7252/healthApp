@@ -1,17 +1,17 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {View} from 'react-native';
-import {scale} from '../../lib/utils';
+import palette from '../../theme/palette';
 import Header from './header';
-import {Surface} from 'react-native-paper';
 import {layoutStyle} from './layoutStyle';
 function Layout({children, ...restProps}) {
   const {showHeader = true, header: CustomeHeader} = restProps || {};
 
   return (
-    <View style={{...layoutStyle}}>
+    <View style={{flex: 1, backgroundColor: palette.background.default}}>
       {CustomeHeader && <CustomeHeader />}
       {showHeader && <Header {...restProps} />}
-      {children}
+      <View style={{...layoutStyle}}>{children}</View>
     </View>
   );
 }

@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import {Surface, Modal} from 'react-native-paper';
 import React, {useCallback} from 'react';
 import ModalHeader from './header';

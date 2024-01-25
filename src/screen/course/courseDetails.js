@@ -41,6 +41,7 @@ import useAuthUser from '../../hooks/useAuthUser';
 import {cloneDeep} from 'lodash';
 import {courseStepsProgressModifier} from '../../api/helper';
 import {progressStatus} from '../../lib/constants';
+import LineSkeleton from '../../components/LineSkeleton';
 
 const isEnrolled = true;
 
@@ -149,14 +150,13 @@ const CourseDetails = props => {
     };
   }, [scrollY, translateY]);
 
-  const accordionRenderer = ({item, index}) => {};
-
   const startLession = useCallback(({lessonId}) => {
     navigation.navigate(UI_ROUTES.lessionDetail, {
       id: lessonId,
       courseId,
     });
   }, []);
+
   const {content: {rendered = ''} = {}, _embedded} = courseDetail || {};
   const duration = rendered.split(' ')[0] || '<p>1:04</p>';
   const isDurationHTML =
@@ -167,7 +167,6 @@ const CourseDetails = props => {
     : {html: `<p>${duration}</p>`};
 
   const imageUrl = _embedded?.['wp:featuredmedia']?.[0]?.source_url;
-  // console.log("🚀 ~ CourseDetails ~ courseStepsProgress:", courseStepsProgress)
 
   const lessonIdFromProgressStep = findLessonIdFromProgressStepId(
     courseSteps,
@@ -251,13 +250,25 @@ const CourseDetails = props => {
                 </View>
                 <View style={{gap: verticalScale(5)}}>
                   <Typography variant="labelMedium">Type</Typography>
-                  <Typography variant="labelLarge">
-                    {capitailize(courseDetail?.course_price_type)}
-                  </Typography>
+                  {!courseDetail && courseDetailLoading ? (
+                    <LineSkeleton
+                      style={{width: '100%', borderRadius: 5, height: 15}}
+                    />
+                  ) : (
+                    <Typography variant="labelLarge">
+                      {capitailize(courseDetail?.course_price_type)}
+                    </Typography>
+                  )}
                 </View>
                 <View style={{gap: verticalScale(5)}}>
                   <Typography variant="labelMedium">Level</Typography>
-                  <Typography variant="labelLarge">Entry</Typography>
+                  {!courseDetail && courseDetailLoading ? (
+                    <LineSkeleton
+                      style={{width: '100%', borderRadius: 5, height: 15}}
+                    />
+                  ) : (
+                    <Typography variant="labelLarge">Entry</Typography>
+                  )}
                 </View>
               </View>
               <View style={{paddingTop: verticalScale(30)}}>
