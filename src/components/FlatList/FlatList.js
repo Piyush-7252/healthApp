@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
 import {FlatList as RNFlatList, View, Text, RefreshControl} from 'react-native';
 import {ActivityIndicator} from 'react-native-paper';
@@ -17,7 +18,7 @@ const FlatList = ({
   onRefresh,
   error,
   horizontal,
-  enableRefresh=true,
+  enableRefresh = true,
   ...rest
 }) => {
   const [refreshing, setRefreshing] = useState(false);
@@ -70,7 +71,7 @@ const FlatList = ({
         {...(enableRefresh ? refreshControlProps : {})}
         // Other FlatList props
       />
-      {loading && data?.length && page > 1 && (
+      {!!(loading && data?.length && page > 1) && (
         <View>
           <ActivityIndicator animating={true} size={'large'} />
         </View>

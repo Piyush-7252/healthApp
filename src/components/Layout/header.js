@@ -1,12 +1,12 @@
 /* eslint-disable react-native/no-inline-styles */
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {View} from 'react-native';
-import {IconButton} from '../icon';
-import {useNavigation} from '@react-navigation/native';
-import Typography from '../Typography';
-import {scale, verticalScale} from '../../lib/utils';
+import {verticalScale} from '../../lib/utils';
 import CustomButton from '../CustomButton';
-import {layoutPaddingRight} from './layoutStyle';
+import Typography from '../Typography';
+import {IconButton} from '../icon';
+import {layoutPadding, layoutPaddingRight} from './layoutStyle';
 
 function Header(props) {
   const naivation = useNavigation();
@@ -77,6 +77,7 @@ function Header(props) {
           style={{
             marginTop: verticalScale(30),
             marginBottom: verticalScale(20),
+            ...layoutPadding,
           }}>
           <Typography variant="displaySmall">{bigTitle}</Typography>
         </View>

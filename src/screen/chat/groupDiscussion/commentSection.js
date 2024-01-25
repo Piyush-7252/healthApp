@@ -238,10 +238,10 @@ const CommentSection = props => {
               </View>
             </View>
             <View style={{flexDirection: 'row', gap: 10}}>
-              {fourmDetail?.topic_tags &&
+              {!!fourmDetail?.topic_tags &&
                 fourmDetail?.topic_tags?.split(',').map(item => {
                   return (
-                    <View style={{flexDirection: 'row', gap: 8}}>
+                    <View style={{flexDirection: 'row', gap: 8}} key={item}>
                       <Icon name="tag" />
                       <Typography variant="bodyMedium">
                         {item.trim()}
